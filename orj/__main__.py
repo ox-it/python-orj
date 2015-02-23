@@ -23,7 +23,7 @@ with context:
 minx, miny, maxx, maxy = float('inf'), float('inf'), float('-inf'), float('-inf')
 for obj in database.objects:
     try:
-        get_bounding_box = obj.geometry.get_bounding_box
+        get_bounding_box = obj.get_bounding_box
     except AttributeError:
         continue
     a, b, c, d = get_bounding_box()
@@ -70,7 +70,7 @@ def ty(y):
 
 for obj in database.objects:
     try:
-        draw_cairo = obj.geometry.draw_cairo
+        draw_cairo = obj.draw_cairo
     except AttributeError:
         continue
     draw_cairo(coord_context, stroke_context)

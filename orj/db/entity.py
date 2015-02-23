@@ -4,6 +4,7 @@ from .object import Object
 
 class Entity(Object):
     parent_object_id = None
+    geometry = None
 
     def read(self, f):
         object_version = read_int(f)
@@ -24,4 +25,10 @@ class Entity(Object):
                 self.parent_object_id = read_long(f)
         if object_version >= 4:
             self.line_type = read_short(f)
+
+    def draw_cairo(self, coord_context, stroke_context):
+        self.geometry.draw_cairo(coord_context, stroke_context)
+
+    def get_bounding_box(self):
+        return self.geometry.get_bounding_box()
 
