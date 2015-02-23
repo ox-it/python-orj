@@ -5,15 +5,11 @@ import cairocffi as cairo
 
 #logging.basicConfig(level=logging.DEBUG)
 
-from .database import Database
+from .file import parse_orj_file
 from .db import Space
-from .header import Header
-
-
-database = Database()
 
 with open(sys.argv[1], 'rb') as f:
-    database.read(f)
+    database = parse_orj_file(f)
 
 w, h = 500, 500
 

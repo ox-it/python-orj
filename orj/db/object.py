@@ -32,5 +32,5 @@ class Object(object):
 
     @classmethod
     def create(cls, object_type):
-        from ..object_registry import registry
+        from . import registry
         return registry[object_type]()

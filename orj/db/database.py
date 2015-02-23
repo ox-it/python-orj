@@ -1,8 +1,13 @@
 import StringIO
-from .db import Graph, Group, LayerList, Object, DatabaseHeader
-from .utils import *
-from .enums import ObjectType
-from .object_registry import registry_by_id
+
+from ..utils import *
+from ..enums import ObjectType
+
+from .graph import Graph
+from .group import Group
+from .layer_list import LayerList
+from .object import Object
+from .header import DatabaseHeader
 
 class Database(Object):
     def __init__(self):
@@ -36,7 +41,8 @@ class Database(Object):
                 except ValueError:
                     raise AssertionError
                 else:
-                    cls = registry_by_id[object_type]
+                    from . import registry_by_object_type
+                    cls = registry_by_object_type[object_type]
                     obj = cls()
                     obj.read(object_buffer, ht1)
                     self.objects.append(obj)

@@ -1,8 +1,12 @@
+from ..enums import ObjectType
 from ..utils import *
 from .. import spatial
+
 from .entity import Entity
 
 class Space(Entity):
+    object_type = ObjectType.SPACE
+
     def read(self, f, ht):
         object_version = read_int(f)
         if object_version > 4:
