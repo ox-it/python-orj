@@ -14,7 +14,7 @@ class Space(Entity):
         super(Space, self).read(f)
 
         if object_version >= 4:
-            self.polygon_3d = spatial.read_polygon_3d_with_bulges_and_holes(f)
+            self.geometry = spatial.read_polygon_3d_with_bulges_and_holes(f)
         else:
             raise AssertionError
 
