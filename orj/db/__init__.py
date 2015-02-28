@@ -7,7 +7,11 @@ from .header import *
 from .layer_list import *
 from .line import *
 from .object import *
+from .polyline import *
 from .space import *
+from .symbol_def import *
+from .symbol_ref import *
+from .text import *
 
 registry = {}
 registry_by_object_type = {}

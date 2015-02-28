@@ -28,5 +28,14 @@ class Space(Entity):
         if object_version >= 2:
             read_bool(f) # not sure what this means
 
-        assert not f.read(1) # Make sure we've consumed the entire buffer
+#        assert not f.read(1) # Make sure we've consumed the entire buffer
+
+    def draw_svg(self, parent):
+        elem = self.geometry.draw_svg()
+        if 'ObjectId' in self.attributes:
+            elem.attrib['id'] = 'object-' + self.attributes['ObjectId'].value
+        if 'FMObjectType' in self.attributes:
+            elem.attrib['class'] = self.attributes['FMObjectType'].value
+        print self.attributes
+        parent.append(elem)
 

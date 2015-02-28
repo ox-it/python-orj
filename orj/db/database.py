@@ -1,5 +1,6 @@
 import StringIO
 
+from ..bounding_box import BoundingBox
 from ..utils import *
 from ..enums import ObjectType
 
@@ -13,10 +14,12 @@ class Database(Object):
     def __init__(self):
         self.header = DatabaseHeader()
         self.graph = Graph()
-        self.symbol_def_list = Group()
+        self.symbol_defs = Group()
         self.objects = []
         self.id_map = {}
-        self.layer_list = LayerList()
+        self.layers = LayerList()
+        self.symbol_def_data = {}
+        super(Database, self).__init__()
 
     def read(self, f):
         object_version = self.read_object_version(f)
@@ -28,8 +31,9 @@ class Database(Object):
         ht1 = {}
         self.graph.read(read_buffer(f), ht1)
 
-        ht2 = {}
-        self.symbol_def_list.read(read_buffer(f), ht2)
+
+        self.symbol_defs.read(read_buffer(f),
+                              self.symbol_def_data)
 
         i1 = read_int(f)
         if i1 > 0:
@@ -50,5 +54,25 @@ class Database(Object):
 
         layer_list_buffer = read_buffer(f)
         if layer_list_buffer.len:
-            self.layer_list.read(layer_list_buffer, self.id_map)
+            self.layers.read(layer_list_buffer, self.id_map)
+
+    def get_bounding_box(self):
+        return BoundingBox.union(obj.get_bounding_box()
+                                     for obj in self.objects)
+
+    def draw_cairo(self, coord_context, stroke_context):
+        if self.layers:
+            for layer in reversed(self.layers):
+                layer.draw_cairo(coord_context, stroke_context)
+        else:
+            for obj in reversed(self.objects):
+                obj.draw_cairo(coord_context, stroke_context)
+
+    def draw_svg(self, elem):
+        if self.layers:
+            for layer in reversed(self.layers):
+                layer.draw_svg(elem)
+        else:
+            for obj in reversed(self.objects):
+                obj.draw_svg(elem)
 

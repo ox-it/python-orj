@@ -33,3 +33,5 @@ class ObjectType(enum.Enum):
     RED_LINE = 58
     LEGEND = 59
 
+class TextAlignment(enum.Enum):
+    LEFT = 0

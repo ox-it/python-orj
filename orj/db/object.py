@@ -5,7 +5,7 @@ from ..utils import *
 
 class Object(object):
     def __init__(self):
-        self.attributes = []
+        self.attributes = {}
 
     def read_object_version(self, f):
         return read_int(f)
@@ -28,7 +28,7 @@ class Object(object):
                 if obj:
                     obj.read(f)
                 if isinstance(obj, Attribute):
-                    self.attributes.append(obj)
+                    self.attributes[obj.name] = obj
 
     @classmethod
     def create(cls, object_type):
