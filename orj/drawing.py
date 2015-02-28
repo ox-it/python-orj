@@ -58,8 +58,8 @@ class CairoDrawer(Drawer):
         context = cairo.Context(surface)
         coord_context = ContextWrapper(context, self.coordinate_transform)
         stroke_context = ContextWrapper(context, self.stroke_style)
-
         self.database.draw_cairo(coord_context, stroke_context)
+        return surface
 
 class SVGDrawer(Drawer):
     def draw(self):
