@@ -18,7 +18,7 @@ class Space(Entity):
         else:
             raise AssertionError
 
-        self.point = spatial.read_point_3d(f)
+        self.centroid = spatial.read_point_3d(f)
 
         # There's a bug (for (int m = 0; m > k; m++) {...}) in orviewer that means
         # this would never work if the returned int isn't zero
