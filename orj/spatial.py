@@ -174,6 +174,18 @@ class Arc3D(object):
                            self.center.y - self.radius,
                            self.center.y + self.radius)
 
+    def draw_svg(self):
+        th0, th1 = self.start_angle, self.start_angle + self.angle
+        p0 = Point3D(self.center.x + math.cos(th0) * self.radius,
+                     self.center.y + math.sin(th0) * self.radius,
+                     self.center.z)
+        p1 = Point3D(self.center.x + math.cos(th1) * self.radius,
+                     self.center.y + math.sin(th1) * self.radius,
+                     self.center.z)
+        large_arc = '1' if self.angle > math.pi else '0'
+
+        return SVG.path(d='M {0.x:.4f} {0.y:.4f} A {1:.4f} {1:.4f} 0 {2} 1 {3.x:.4f} {3.y:.4f} '.format(p0, self.radius, large_arc, p1))
+
 def read_point_3d(f):
     x, y, z = read_double(f), read_double(f), read_double(f)
     return Point3D(x, y, z)
