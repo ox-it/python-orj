@@ -24,7 +24,6 @@ class Group(Entity):
                         object_type = ObjectType(x)
                     except ValueError:
                         name = read_string(entity_buffer)
-                        print ("XX", x, name)
                         raise AssertionError
                     else:
                         from . import registry_by_object_type

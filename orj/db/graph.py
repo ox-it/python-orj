@@ -7,4 +7,4 @@ class Graph(Entity):
         if object_version > 1:
             raise NotImplementedError
         super(Graph, self).read(f)
-        pass
+
