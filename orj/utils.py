@@ -10,8 +10,9 @@ def _log(func):
     @functools.wraps(func)
     def wrapped(f):
         value = func(f)
-        frame = inspect.stack()[1]
-        logger.debug("%s: %r", frame[4][frame[5]].strip(), value)
+        if logger.getEffectiveLevel() < logging.INFO:
+            frame = inspect.stack()[1]
+            logger.debug("%s: %r", frame[4][frame[5]].strip(), value)
         return value
     return wrapped
 
