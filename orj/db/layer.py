@@ -32,9 +32,9 @@ class Layer(Group):
         for obj in reversed(self.objects):
             obj.draw_cairo(coord_context, stroke_context)
 
-    def draw_svg(self, elem):
+    def draw_svg(self):
         g = SVG.g(**{'class': 'Layer'})
         for obj in reversed(self.objects):
-            obj.draw_svg(g)
-        elem.append(g)
+            g.extend(obj.draw_svg())
+        yield g
 

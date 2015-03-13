@@ -32,3 +32,5 @@ class Text(Entity):
             
         self.geometry = spatial.read_polyline_3d(f)
 
+    def draw_svg(self):
+        return ()

@@ -30,12 +30,13 @@ class Space(Entity):
 
 #        assert not f.read(1) # Make sure we've consumed the entire buffer
 
-    def draw_svg(self, parent):
-        elem = self.geometry.draw_svg()
-        if 'ObjectId' in self.attributes:
-            elem.attrib['id'] = 'object-' + self.attributes['ObjectId'].value
-        if 'FMObjectType' in self.attributes:
-            elem.attrib['class'] = self.attributes['FMObjectType'].value
-        print self.attributes
-        parent.append(elem)
+    def draw_svg(self):
+        for elem in super(Space, self).draw_svg():
+            elem.attrib['fill'] = '#' + ''.join('%02x' % c for c in self.color)
+            elem.attrib['fill-opacity'] = '0.1'
+            if 'ObjectId' in self.attributes:
+                elem.attrib['id'] = 'object-' + self.attributes['ObjectId'].value
+            if 'FMObjectType' in self.attributes:
+                elem.attrib['class'] = self.attributes['FMObjectType'].value
+            yield elem
 

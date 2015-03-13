@@ -58,17 +58,23 @@ class CairoDrawer(Drawer):
         context = cairo.Context(surface)
         coord_context = ContextWrapper(context, self.coordinate_transform)
         stroke_context = ContextWrapper(context, self.stroke_style)
-        self.database.draw_cairo(coord_context, stroke_context)
+        for database in self.databases:
+            database.draw_cairo(coord_context, stroke_context)
         return surface
 
 class SVGDrawer(Drawer):
     def draw(self):
+        stroke_width = '{:f}px'.format(1.0 / self.scale)
         svg = SVG.svg(width=str(self.width), height=str(self.height))
-        g = SVG.g(transform=" ".join(([
-            "translate({0}, {1})".format(self.margin, self.height - self.margin),
-            "scale({0}, -{0})".format(self.scale),
-            "translate(-{0.minx}, -{0.miny})".format(self.bounding_box),
-        ])))
-        self.database.draw_svg(g)
+        g = SVG.g(**{'transform': " ".join([
+                         "translate({0}, {1})".format(self.margin, self.height - self.margin),
+                         "scale({0}, {1})".format(self.scale, -self.scale),
+                         "translate({0}, {1})".format(-self.bounding_box.minx, -self.bounding_box.miny)]),
+                     'fill': 'none',
+                     'stroke': 'black',
+                     'stroke-width': stroke_width})
+
+        for database in self.databases:
+            g.extend(database.draw_svg())
         svg.append(g)
         return svg

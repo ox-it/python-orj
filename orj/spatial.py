@@ -1,4 +1,5 @@
 import collections
+import math
 from random import random, randint
 
 from .bounding_box import BoundingBox
@@ -9,7 +10,58 @@ Point3D = collections.namedtuple('Point3D', ['x', 'y', 'z'])
 
 class Polyline3D(object):
     def __init__(self, ps):
-        self.ps = ps
+        # If we get lots of points in a line, we can ignore the points on the
+        # line. A point is on the line iff there's the same angle between it
+        # and the two points before and after it.
+        self.ps = ps[:1]
+        s = 0
+        try:
+            p0, p1 = ps[:2]
+        except ValueError:
+            pass
+        else:
+            for p2 in ps[2:]:
+                th0 = math.atan2(p1.x - p0.x, p1.y - p0.y)
+                th1 = math.atan2(p2.x - p1.x, p2.y - p1.y)
+                if abs(th0 - th1) < 0.001:
+                    s += 1
+                    p1 = p2
+                else:
+                    self.ps.append(p1)
+                    p0, p1 = p1, p2
+            self.ps.append(p1)
+
+    def get_bounding_box(self):
+        minx, miny, maxx, maxy = float('inf'), float('inf'), float('-inf'), float('-inf')
+        for p in self.ps:
+            minx, miny = min(minx, p.x), min(miny, p.y)
+            maxx, maxy = max(maxx, p.x), max(maxy, p.y)
+        return BoundingBox(minx, miny, maxx, maxy)
+
+    def draw_cairo(self, coord_context, stroke_context):
+        if not self.ps:
+            return
+        with coord_context as context:
+            context.move_to(self.ps[0].x, self.ps[0].y)
+            for p in self.ps[1:]:
+                context.line_to(p.x, p.y)
+        with stroke_context as context:
+            context.stroke()
+
+    def draw_svg(self):
+        px, py = map('{0:.4f}'.format, [self.ps[0].x, self.ps[1].y])
+        path = ['M {0} {1}'.format(px, py)]
+        for p in self.ps:
+            npx, npy = map('{0:.4f}'.format, [p.x, p.y])
+            if px != npx and py != npy:
+                path.append('L {0} {1}'.format(npx, npy))
+            elif px != npx and py == npy:
+                path.append('H {0}'.format(npx))
+            elif px == npx and py != npy:
+                path.append('V {0}'.format(npy))
+            px, py = npx, npy
+
+        return SVG.path(d=' '.join(path))
 
 class Polygon3D(object):
     def __init__(self, a, b=None):
@@ -44,10 +96,7 @@ class Polygon3D(object):
             hole.draw_cairo(coord_context, stroke_context, is_hole=True)
 
     def draw_svg(self):
-        return SVG.polygon(**{'stroke-width': '0px',
-                              'fill': '#%06x' % randint(0, 256**3),
-                              'points': ' '.join('{0.x} {0.y}'.format(p) for p in self.a),
-                              'vector-effect': 'non-scaling-stroke'})
+        return SVG.polygon(points=' '.join('{0.x} {0.y}'.format(p) for p in self.a))
 
     def get_bounding_box(self):
         minx, miny, maxx, maxy = float('inf'), float('inf'), float('-inf'), float('-inf')
@@ -72,6 +121,36 @@ class Line3D(object):
                            min(self.p1.y, self.p2.y),
                            max(self.p1.x, self.p2.x),
                            max(self.p1.y, self.p2.y))
+
+    def draw_svg(self):
+        return SVG.line(x1=str(self.p1.x),
+                        y1=str(self.p1.y),
+                        x2=str(self.p2.x),
+                        y2=str(self.p2.y))
+
+class Circle3D(object):
+    def __init__(self, center, radius):
+        self.center = center
+        self.radius = radius
+
+    def draw_cairo(self, coord_context, stroke_context):
+        with coord_context as context:
+            context.arc(self.center.x, self.center.y,
+                        self.radius,
+                        0, math.pi * 2)
+        with stroke_context as context:
+            context.stroke()
+
+    def get_bounding_box(self):
+        return BoundingBox(self.center.x - self.radius,
+                           self.center.x + self.radius,
+                           self.center.y - self.radius,
+                           self.center.y + self.radius)
+
+    def draw_svg(self):
+        return SVG.circle(r=str(self.radius),
+                          cx=str(self.center.x),
+                          cy=str(self.center.y))
 
 class Arc3D(object):
     def __init__(self, center, radius, start_angle, angle):

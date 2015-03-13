@@ -68,11 +68,13 @@ class Database(Object):
             for obj in reversed(self.objects):
                 obj.draw_cairo(coord_context, stroke_context)
 
-    def draw_svg(self, elem):
+    def draw_svg(self):
         if self.layers:
             for layer in reversed(self.layers):
-                layer.draw_svg(elem)
+                for elem in layer.draw_svg():
+                    yield elem
         else:
             for obj in reversed(self.objects):
-                obj.draw_svg(elem)
+                for elem in obj.draw_svg():
+                    yield elem
 

@@ -29,6 +29,14 @@ class Entity(Object):
     def draw_cairo(self, coord_context, stroke_context):
         self.geometry.draw_cairo(coord_context, stroke_context)
 
+    def draw_svg(self):
+        elem = self.geometry.draw_svg()
+        if self.fill:
+            fill_color = self.fill_color or self.color
+            elem.attrib['fill'] = '#{0:02x}{1:02x}{2:02x}'.format(*fill_color)
+            elem.attrib['fill-opacity'] = "0.1"
+        yield elem
+
     def get_bounding_box(self):
         return self.geometry.get_bounding_box()
 
