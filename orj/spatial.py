@@ -187,7 +187,7 @@ class Arc3D(object):
         return SVG.path(d='M {0.x:.4f} {0.y:.4f} A {1:.4f} {1:.4f} 0 {2} 1 {3.x:.4f} {3.y:.4f} '.format(p0, self.radius, large_arc, p1))
 
 def read_point_3d(f):
-    x, y, z = read_double(f), read_double(f), read_double(f)
+    x, y, z = read_point(f)
     return Point3D(x, y, z)
 
 def read_polygon_3d_with_bulges(f):

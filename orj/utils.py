@@ -50,6 +50,10 @@ def read_double(f):
     return struct.unpack('>d', f.read(8))[0]
 
 @_log
+def read_point(f):
+    return struct.unpack('>ddd', f.read(24))
+
+@_log
 def read_buffer(f):
     size = read_int(f)
     return StringIO.StringIO(f.read(size))
