@@ -34,8 +34,6 @@ class Space(Entity):
         for elem in super(Space, self).draw_svg():
             elem.attrib['fill'] = '#' + ''.join('%02x' % c for c in self.color)
             elem.attrib['fill-opacity'] = '0.1'
-            if 'ObjectId' in self.attributes:
-                elem.attrib['id'] = 'object-' + self.attributes['ObjectId'].value
             if 'FMObjectType' in self.attributes:
                 elem.attrib['class'] = self.attributes['FMObjectType'].value
             yield elem

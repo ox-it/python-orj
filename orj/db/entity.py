@@ -31,6 +31,8 @@ class Entity(Object):
 
     def draw_svg(self):
         elem = self.geometry.draw_svg()
+        if 'ObjectId' in self.attributes:
+                elem.attrib['id'] = 'object-' + self.attributes['ObjectId'].value
         if self.fill:
             fill_color = self.fill_color or self.color
             elem.attrib['fill'] = '#{0:02x}{1:02x}{2:02x}'.format(*fill_color)
