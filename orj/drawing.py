@@ -1,11 +1,15 @@
 from __future__ import absolute_import
 
+import math
+
 try:
     import cairocffi as cairo
 except ImportError:
     import cairo
 
 from lxml.builder import ElementMaker
+
+from .bounding_box import BoundingBox
 
 SVG = ElementMaker(namespace='http://www.w3.org/2000/svg',
                    nsmap={None: 'http://www.w3.org/2000/svg'})
@@ -24,18 +28,28 @@ class ContextWrapper(object):
         self.context.restore()
 
 class Drawer(object):
-    def __init__(self, database, width, height, margin=10, pad=True):
-        self.database = database
-        self.width = width
-        self.height = height
+    def __init__(self, databases, max_width, max_height, margin=10, pad=True):
+        self.databases = databases
+        self.max_width = max_width
+        self.max_height = max_height
         self.pad = pad
         self.margin = margin
-        self.inner_width = width - 2 * margin
-        self.inner_height = height - 2 * margin
 
-        self.bounding_box = self.database.get_bounding_box()
-        self.canvas_aspect_ratio = self.inner_width / self.inner_height
+        self.bounding_box = BoundingBox.zero()
+        for database in databases:
+            self.bounding_box |= database.get_bounding_box()
+
         self.drawing_aspect_ratio = self.bounding_box.width / self.bounding_box.height
+        if self.drawing_aspect_ratio > 1:
+            self.width = self.max_width
+            self.inner_width = self.width - 2 * self.margin
+            self.inner_height = int(math.ceil(self.inner_width / self.drawing_aspect_ratio))
+            self.height = self.inner_height + 2 * self.margin
+        else:
+            self.height = self.max_height
+            self.inner_height = self.height - 2 * self.margin
+            self.inner_width = int(math.ceil(self.inner_height * self.drawing_aspect_ratio))
+            self.width = self.inner_width + 2 * self.margin
 
         self.scale = min(self.inner_width / self.bounding_box.width,
                          self.inner_height / self.bounding_box.height)
