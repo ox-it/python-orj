@@ -1,7 +1,10 @@
 import argparse
 import logging
+import os.path
+import sys
 
-from lxml import etree
+from .drawing import drawers
+from .file import parse_orj_file
 
 argparser = argparse.ArgumentParser(
     description="File conversion for ORJ floorplan files")
@@ -19,17 +22,22 @@ argparser.add_argument('-y', '--height',
 argparser.add_argument('-m', '--margin',
                        action='store', type=int, dest='margin', default=1,
                        help='Image margin in pixels')
-
+argparser.add_argument('-F', '--formats',
+                       action='append', required=True,
+                       choices=[d.format_name for d in drawers])
 
 args = argparser.parse_args()
 if args.loglevel:
     try:
         logging.basicConfig(level=getattr(logging, args.loglevel.upper()))
     except AttributeError:
-        raise ValueError("{0} is not a valid log level".format(args.loglevel.upper()))
+        sys.stderr.write("{0} is not a valid log level".format(args.loglevel.upper()))
+        sys.exit(1)
 
-from .drawing import CairoDrawer, SVGDrawer
-from .file import parse_orj_file
+for filename in args.filenames:
+    if not os.path.isfile(filename):
+        sys.stderr.write("Couldn't find file: {0}\n".format(filename))
+        sys.exit(1)
 
 databases = []
 for filename in args.filenames:
@@ -37,11 +45,13 @@ for filename in args.filenames:
         database = parse_orj_file(f)
         databases.append(database)
 
-drawer = CairoDrawer(databases, args.width, args.height, args.margin)
-surface = drawer.draw()
-surface.write_to_png('example.png')
+base_filename, _ = os.path.splitext(args.filenames[0])
 
-drawer = SVGDrawer(databases, args.width, args.height, args.margin)
-svg = drawer.draw()
-with open('example.svg', 'wb') as f:
-    f.write(etree.tostring(svg))
+for drawer_cls in drawers:
+    if drawer_cls.format_name not in args.formats:
+        continue
+    drawer = drawer_cls(databases, args.width, args.height, args.margin)
+    result = drawer.draw()
+    with open(base_filename + drawer.default_extension, 'wb') as f:
+         drawer.write(f, result)
+

@@ -8,6 +8,7 @@ except ImportError:
     import cairo
 
 from lxml.builder import ElementMaker
+from lxml import etree
 
 from .bounding_box import BoundingBox
 
@@ -54,7 +55,11 @@ class Drawer(object):
         self.scale = min(self.inner_width / self.bounding_box.width,
                          self.inner_height / self.bounding_box.height)
 
-class CairoDrawer(Drawer):
+class PNGDrawer(Drawer):
+    media_type = 'image/png'
+    default_extension = '.png'
+    format_name = 'png'
+
     def coordinate_transform(self, context):
         # Applied in reverse order
         context.translate(self.margin,
@@ -76,7 +81,14 @@ class CairoDrawer(Drawer):
             database.draw_cairo(coord_context, stroke_context)
         return surface
 
+    def write(self, f, surface):
+        surface.write_to_png(f)
+
 class SVGDrawer(Drawer):
+    media_type = 'image/svg+xml'
+    default_extension = '.svg'
+    format_name = 'svg'
+
     def draw(self):
         stroke_width = '{:f}px'.format(1.0 / self.scale)
         svg = SVG.svg(width=str(self.width), height=str(self.height))
@@ -92,3 +104,11 @@ class SVGDrawer(Drawer):
             g.extend(database.draw_svg())
         svg.append(g)
         return svg
+
+    def write(self, f, svg):
+        f.write(etree.tostring(svg))
+
+drawers = (
+    PNGDrawer,
+    SVGDrawer,
+)
