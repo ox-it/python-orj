@@ -1,5 +1,6 @@
 from .arc import *
 from .attribute import *
+from .circle import *
 from .database import *
 from .graph import *
 from .group import *
@@ -7,6 +8,7 @@ from .header import *
 from .layer_list import *
 from .line import *
 from .object import *
+from .polygon import *
 from .polyline import *
 from .space import *
 from .symbol_def import *
