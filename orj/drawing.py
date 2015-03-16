@@ -2,11 +2,6 @@ from __future__ import absolute_import
 
 import math
 
-try:
-    import cairocffi as cairo
-except ImportError:
-    import cairo
-
 from lxml.builder import ElementMaker
 from lxml import etree
 
@@ -72,6 +67,12 @@ class PNGDrawer(Drawer):
         context.set_line_width(1.0)
 
     def draw(self):
+        # Load here as it's slow and not needed if we're only doing e.g. SVG
+        try:
+            import cairocffi as cairo
+        except ImportError:
+            import cairo
+
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32,
                                      self.width, self.height)
         context = cairo.Context(surface)
