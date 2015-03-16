@@ -1,1 +1,6 @@
+build
+orj.egg-info
+dist
+.project
+.pydevproject
 *.pyc
