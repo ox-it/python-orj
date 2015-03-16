@@ -12,5 +12,5 @@ class Circle(Entity):
         if object_version > 1:
             raise AssertionError
         super(Circle, self).read(f)
-        self.geometry = spatial.Circle3D(spatial.read_point_3d(f), read_double(f))
+        self.geometry = spatial.create_circle(f)
 

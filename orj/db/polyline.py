@@ -12,5 +12,4 @@ class Polyline(Entity):
         if object_version > 1:
             raise AssertionError
         super(Polyline, self).read(f)
-        self.geometry = spatial.read_polyline_3d(f)
-
+        self.geometry = spatial.create_polyline(f)

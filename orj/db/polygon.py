@@ -13,8 +13,8 @@ class Polygon(Entity):
             raise AssertionError
         super(Polygon, self).read(f)
         if object_version >= 2:
-            self.geometry = spatial.read_polygon_3d_with_bulges(f)
+            self.geometry = spatial.create_polygon_with_bulges(f)
         else:
-            self.geometry = spatial.read_polygon_3d(f)
+            self.geometry = spatial.create_polygon(f)
         assert f.pos == f.len
 

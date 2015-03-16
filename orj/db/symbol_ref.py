@@ -13,7 +13,7 @@ class SymbolRef(Entity):
             raise AssertionError
         super(SymbolRef, self).read(f)
         self.name = read_string(f)
-        self.transform = spatial.read_transform_3d(f)
+        self.transform = spatial.create_transform(f)
         if object_version >= 2:
             self.use_symbol_def_color = read_bool(f)
 

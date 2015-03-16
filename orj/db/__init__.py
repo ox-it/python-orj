@@ -2,6 +2,7 @@ from .arc import *
 from .attribute import *
 from .circle import *
 from .database import *
+from .ellipse import *
 from .graph import *
 from .group import *
 from .header import *

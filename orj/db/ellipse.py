@@ -1,18 +1,16 @@
 from ..enums import ObjectType
-from orj.spatial import creation
+from .. import spatial
 from ..utils import *
 
 from .entity import Entity
-from .. import spatial
 
-class Arc(Entity):
-    object_type = ObjectType.ARC
+class Ellipse(Entity):
+    object_type = ObjectType.ELLIPSE
 
     def read(self, f, ht):
         object_version = read_int(f)
         if object_version > 1:
             raise AssertionError
-        super(Arc, self).read(f)
-
-        self.geometry = spatial.create_arc(f)
+        super(Ellipse, self).read(f)
+        self.geometry = spatial.create_ellipse(f)
 

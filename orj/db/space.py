@@ -14,11 +14,11 @@ class Space(Entity):
         super(Space, self).read(f)
 
         if object_version >= 4:
-            self.geometry = spatial.read_polygon_3d_with_bulges_and_holes(f)
+            self.geometry = spatial.create_polygon_with_bulges_and_holes(f)
         else:
             raise AssertionError
 
-        self.centroid = spatial.read_point_3d(f)
+        self.centroid = spatial.create_point(f)
 
         # There's a bug (for (int m = 0; m > k; m++) {...}) in orviewer that means
         # this would never work if the returned int isn't zero

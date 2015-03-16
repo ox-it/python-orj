@@ -13,7 +13,7 @@ class Text(Entity):
             raise AssertionError
         super(Text, self).read(f)
         self.text = read_string(f).encode('utf-8')
-        self.position = spatial.read_point_3d(f)
+        self.position = spatial.create_point(f)
         if object_version >= 2:
             self.font_size = read_int(f)
             self.is_multiline = read_bool(f)
@@ -30,7 +30,7 @@ class Text(Entity):
 
 
             
-        self.geometry = spatial.read_polyline_3d(f)
+        self.geometry = spatial.create_polyline(f)
 
     def draw_svg(self):
         return ()

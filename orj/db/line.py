@@ -13,5 +13,4 @@ class Line(Entity):
             raise AssertionError
         super(Line, self).read(f)
 
-        self.geometry = spatial.Line3D(spatial.read_point_3d(f),
-                                       spatial.read_point_3d(f))
+        self.geometry = spatial.create_line(f)

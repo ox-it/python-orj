@@ -1,3 +1,4 @@
+from ..bounding_box import BoundingBox
 from ..utils import *
 
 from .object import Object
@@ -27,9 +28,12 @@ class Entity(Object):
             self.line_type = read_short(f)
 
     def draw_cairo(self, coord_context, stroke_context):
-        self.geometry.draw_cairo(coord_context, stroke_context)
+        if self.geometry is not None:
+            self.geometry.draw_cairo(coord_context, stroke_context)
 
     def draw_svg(self):
+        if self.geometry is None:
+            return
         elem = self.geometry.draw_svg()
         if 'ObjectId' in self.attributes:
                 elem.attrib['id'] = 'object-' + self.attributes['ObjectId'].value
@@ -40,5 +44,8 @@ class Entity(Object):
         yield elem
 
     def get_bounding_box(self):
-        return self.geometry.get_bounding_box()
+        if self.geometry is not None:
+            return self.geometry.get_bounding_box()
+        else:
+            return BoundingBox.zero()
 
