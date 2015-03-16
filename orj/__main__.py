@@ -6,6 +6,8 @@ import sys
 from .drawing import drawers
 from .file import parse_orj_file
 
+logger = logging.getLogger(__name__)
+
 argparser = argparse.ArgumentParser(
     description="File conversion for ORJ floorplan files")
 argparser.add_argument('filenames', metavar='filename', nargs='+',
@@ -41,6 +43,7 @@ for filename in args.filenames:
 
 databases = []
 for filename in args.filenames:
+    logger.info("Reading %s", filename)
     with open(filename, 'rb') as f:
         database = parse_orj_file(f)
         databases.append(database)
@@ -53,5 +56,6 @@ for drawer_cls in drawers:
     drawer = drawer_cls(databases, args.width, args.height, args.margin)
     result = drawer.draw()
     with open(base_filename + drawer.default_extension, 'wb') as f:
+         logger.info("Writing %s", f.name)
          drawer.write(f, result)
 
