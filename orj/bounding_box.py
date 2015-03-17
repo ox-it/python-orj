@@ -23,3 +23,12 @@ class BoundingBox(object):
             result |= bounding_box
         return result
 
+    def __repr__(self):
+        return 'BoundingBox({}, {}, {}, {})'.format(self.minx, self.miny,
+                                                    self.maxx, self.maxy)
+
+    def __eq__(self, other):
+        return (self.minx == other.minx and
+                self.miny == other.miny and
+                self.maxx == other.maxx and
+                self.maxy == other.maxy)

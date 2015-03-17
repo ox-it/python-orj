@@ -54,6 +54,8 @@ for drawer_cls in drawers:
     if drawer_cls.format_name not in args.formats:
         continue
     drawer = drawer_cls(databases, args.width, args.height, args.margin)
+    if drawer.empty:
+        sys.exit(1)
     result = drawer.draw()
     with open(base_filename + drawer.default_extension, 'wb') as f:
          logger.info("Writing %s", f.name)

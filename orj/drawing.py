@@ -35,6 +35,11 @@ class Drawer(object):
         for database in databases:
             self.bounding_box |= database.get_bounding_box()
 
+        self.empty = self.bounding_box == BoundingBox.zero()
+        if self.empty:
+            self.draw = self.draw_empty
+            return
+
         self.drawing_aspect_ratio = self.bounding_box.width / self.bounding_box.height
         if self.drawing_aspect_ratio > 1:
             self.width = self.max_width
@@ -49,6 +54,9 @@ class Drawer(object):
 
         self.scale = min(self.inner_width / self.bounding_box.width,
                          self.inner_height / self.bounding_box.height)
+
+    def draw_empty(self):
+        raise ValueError("No objects to draw")
 
 class PNGDrawer(Drawer):
     media_type = 'image/png'
