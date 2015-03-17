@@ -27,11 +27,15 @@ class Ellipse(object):
             context.stroke()
 
     def get_bounding_box(self):
-        radius = max(self.rx, self.ry)
-        return BoundingBox(self.center.x - radius,
-                           self.center.x + radius,
-                           self.center.y - radius,
-                           self.center.y + radius)
+        ps = [self.point_at(self.start_angle),
+              self.point_at(self.end_angle)]
+
+        for i in range(0, 4):
+            angle = pi / 2 * i - self.x_axis_rotation
+            if self.start_angle < angle < self.end_angle:
+                ps.append(self.point_at(angle))
+        xs, ys = [p.x for p in ps], [p.y for p in ps]
+        return BoundingBox(min(xs), min(ys), max(xs), max(ys))
 
     arc_svg_path = 'M {0.x:.4f} {0.y:.4f} A {1:.4f} {2:.4f} {3:.4f} {4} 1 {5.x:.4f} {5.y:.4f}'
 
