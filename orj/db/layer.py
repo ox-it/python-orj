@@ -17,7 +17,10 @@ class Layer(Group):
         self.visible = read_bool(f)
         for i in range(read_int(f)):
             object_id = read_long(f)
-            self.objects.append(id_map[object_id])
+            try:
+                self.objects.append(id_map[object_id])
+            except KeyError:
+                pass # The original implementation doesn't mind missing objects either
 
     def __iter__(self):
         return iter(self.objects)
