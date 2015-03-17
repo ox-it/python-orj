@@ -61,7 +61,7 @@ def create_polygon_with_bulges_and_holes(f):
         v1.append(create_point(f))
 
     if read_bool(f): # not sure what these are
-        for i in range(len(v1)):
+        for i in range(read_int(f)):
             v2.append(read_double(f))
         polygon_3d = Polygon(v1, v2)
     else:
