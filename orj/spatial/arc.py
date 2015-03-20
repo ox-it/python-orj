@@ -10,5 +10,5 @@ from .vector import Vector
 class Arc(Ellipse):
     def __init__(self, center, radius, start_angle, angle):
         super(Arc, self).__init__(center,
-                                  Vector(0, radius, 0), 1,
+                                  Vector(radius, 0, 0), 1,
                                   start_angle, angle)

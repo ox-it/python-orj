@@ -9,8 +9,8 @@ class Ellipse(object):
     def __init__(self, center, major_axis_direction, ratio, start_angle, angle):
         self.center = center
         self.major_axis_direction = major_axis_direction
-        self.x_axis_rotation = atan2(major_axis_direction.x,
-                                     major_axis_direction.y)
+        self.x_axis_rotation = atan2(major_axis_direction.y,
+                                     major_axis_direction.x)
         self.rx = sqrt(major_axis_direction.x ** 2 + major_axis_direction.y ** 2)
         self.ry = self.rx * ratio
         self.ratio = ratio
