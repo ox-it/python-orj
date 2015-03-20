@@ -1,4 +1,4 @@
-from math import sin, cos, pi, atan2, sqrt
+from math import sin, cos, pi, atan2, sqrt, tan, atan
 
 from ..bounding_box import BoundingBox
 from ..drawing import SVG
@@ -14,9 +14,9 @@ class Ellipse(object):
         self.rx = sqrt(major_axis_direction.x ** 2 + major_axis_direction.y ** 2)
         self.ry = self.rx * ratio
         self.ratio = ratio
-        self.start_angle = start_angle
+        self.start_angle = start_angle % (pi * 2)
         self.angle = angle
-        self.end_angle = start_angle + angle
+        self.end_angle = (start_angle + angle) % (pi * 2)
 
     def draw_cairo(self, coord_context, stroke_context):
         with coord_context as context:
@@ -27,13 +27,27 @@ class Ellipse(object):
             context.stroke()
 
     def get_bounding_box(self):
+        # See http://fridrich.blogspot.com/2011/06/bounding-box-of-svg-elliptical-arc.html
+        # to get a better understanding of what's going on here.
+        # The bounding box is that of up to six points: the two ends of the
+        # segment, and any of the four extrema of the ellipse in x and y that
+        # lie on the segment.
         ps = [self.point_at(self.start_angle),
               self.point_at(self.end_angle)]
 
-        for i in range(0, 4):
-            angle = pi / 2 * i - self.x_axis_rotation
-            if self.start_angle < angle < self.end_angle:
-                ps.append(self.point_at(angle))
+        # These are the extrema in x and y for the whole ellipse (i.e. not
+        # just the segment). If they are not on the segment then we don't use them.
+        possibles = [   - atan2(self.ry * tan(self.x_axis_rotation), self.rx),
+                     pi - atan2(self.ry * tan(self.x_axis_rotation), self.rx),
+                          atan2(self.ry, tan(self.x_axis_rotation) * self.rx),
+                     pi + atan2(self.ry, tan(self.x_axis_rotation) * self.rx)]
+        for th in possibles:
+            if self.start_angle < self.end_angle:
+                if self.start_angle < th < self.end_angle:
+                    ps.append(self.point_at(th))
+            else:
+                if self.start_angle < th or th < self.end_angle:
+                    ps.append(self.point_at(th))
         xs, ys = [p.x for p in ps], [p.y for p in ps]
         return BoundingBox(min(xs), min(ys), max(xs), max(ys))
 
