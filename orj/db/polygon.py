@@ -16,5 +16,3 @@ class Polygon(Entity):
             self.geometry = spatial.create_polygon_with_bulges(f)
         else:
             self.geometry = spatial.create_polygon(f)
-        assert f.pos == f.len
-
