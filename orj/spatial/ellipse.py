@@ -30,7 +30,7 @@ class Ellipse(object):
         # See http://fridrich.blogspot.com/2011/06/bounding-box-of-svg-elliptical-arc.html
         # to get a better understanding of what's going on here.
         # The bounding box is that of up to six points: the two ends of the
-        # segment, and any of the four extrema of the ellipse in x and y that
+        # segment, and any of the four extrema of the ellipse in x and y that
         # lie on the segment.
         ps = [self.point_at(self.start_angle),
               self.point_at(self.end_angle)]
