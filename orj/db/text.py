@@ -1,4 +1,5 @@
 from ..enums import ObjectType, TextAlignment
+from ..exceptions import UnsupportedObjectVersion
 from .. import spatial
 from ..utils import *
 
@@ -10,7 +11,7 @@ class Text(Entity):
     def read(self, f, ht):
         object_version = read_int(f)
         if object_version > 5:
-            raise AssertionError
+            raise UnsupportedObjectVersion
         super(Text, self).read(f)
         self.text = read_string(f).encode('utf-8')
         self.position = spatial.create_point(f)
