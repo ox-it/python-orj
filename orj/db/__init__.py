@@ -6,6 +6,7 @@ from .ellipse import *
 from .graph import *
 from .group import *
 from .header import *
+from .image import *
 from .layer_list import *
 from .line import *
 from .object import *
