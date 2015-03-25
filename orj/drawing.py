@@ -111,6 +111,7 @@ class SVGDrawer(Drawer):
                          "translate({0}, {1})".format(-self.bounding_box.minx, -self.bounding_box.miny)]),
                      'fill': 'none',
                      'stroke': 'black',
+                     'stroke-linecap': 'round',
                      'stroke-width': stroke_width})
 
         for database in self.databases:
