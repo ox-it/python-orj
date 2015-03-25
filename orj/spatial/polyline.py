@@ -44,15 +44,15 @@ class Polyline(object):
             context.stroke()
 
     def draw_svg(self):
-        px, py = map('{0:.4f}'.format, [self.ps[0].x, self.ps[0].y])
-        path = ['M {0} {1}'.format(px, py)]
+        op = self.ps[0]
+        path = ['M {0.x:.4f} {0.y:.4f}'.format(op)]
         for p in self.ps:
-            npx, npy = map('{0:.4f}'.format, [p.x, p.y])
-            if px != npx and py != npy:
-                path.append('L {0} {1}'.format(npx, npy))
-            elif px != npx and py == npy:
-                path.append('H {0}'.format(npx))
-            elif px == npx and py != npy:
-                path.append('V {0}'.format(npy))
-            px, py = npx, npy
+            dp = p - op
+            if dp.x != 0 and dp.y != 0:
+                path.append('l {0.x:.4f} {0.y:.4f}'.format(dp))
+            elif dp.x != 0:
+                path.append('h {0.x:.4f}'.format(dp))
+            elif dp.y != 0:
+                path.append('v {0.y:.4f}'.format(dp))
+            op = p
         return SVG.path(d=' '.join(path))
