@@ -7,8 +7,8 @@ from lxml import etree
 
 from .bounding_box import BoundingBox
 
-SVG = ElementMaker(namespace='http://www.w3.org/2000/svg',
-                   nsmap={None: 'http://www.w3.org/2000/svg'})
+svgns = 'http://www.w3.org/2000/svg'
+SVG = ElementMaker(namespace=svgns)
 
 class ContextWrapper(object):
     def __init__(self, context, update_context):
@@ -55,7 +55,7 @@ class Drawer(object):
         self.scale = min(self.inner_width / self.bounding_box.width,
                          self.inner_height / self.bounding_box.height)
 
-    def draw_empty(self):
+    def draw_empty(self, *args, **kwargs):
         raise ValueError("No objects to draw")
 
 class PNGDrawer(Drawer):
@@ -98,9 +98,13 @@ class SVGDrawer(Drawer):
     default_extension = '.svg'
     format_name = 'svg'
 
-    def draw(self):
+    def draw(self, nsmap=None):
         stroke_width = '{:f}px'.format(1.0 / self.scale)
-        svg = SVG.svg(width=str(self.width), height=str(self.height))
+        nsmap = nsmap.copy() if nsmap else {}
+        nsmap[None] = 'http://www.w3.org/2000/svg'
+        svg = etree.Element('{' + svgns + '}svg', nsmap=nsmap,
+                            width=str(self.width), height=str(self.height))
+
         g = SVG.g(**{'transform': " ".join([
                          "translate({0}, {1})".format(self.margin, self.height - self.margin),
                          "scale({0}, {1})".format(self.scale, -self.scale),
