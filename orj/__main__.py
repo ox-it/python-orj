@@ -27,6 +27,8 @@ argparser.add_argument('-m', '--margin',
 argparser.add_argument('-F', '--formats',
                        action='append', required=True,
                        choices=[d.format_name for d in drawers])
+argparser.add_argument('--only-draw', action='store', dest='only_draw',
+                       help='Only draw objects of the given types (comma-separated list)')
 
 args = argparser.parse_args()
 if args.loglevel:
@@ -35,6 +37,14 @@ if args.loglevel:
     except AttributeError:
         sys.stderr.write("{0} is not a valid log level".format(args.loglevel.upper()))
         sys.exit(1)
+
+if args.only_draw:
+    object_types = args.only_draw.split(',')
+    from .db import registry_by_object_type
+    for cls in registry_by_object_type.values():
+        if cls.__name__ not in object_types:
+            cls.draw_svg = lambda *args, **kwargs : ()
+            cls.draw_png = lambda *args, **kwargs : None
 
 for filename in args.filenames:
     if not os.path.isfile(filename):
