@@ -55,6 +55,7 @@ class Database(Object):
         layer_list_buffer = read_buffer(f)
         if layer_list_buffer.len:
             self.layers.read(layer_list_buffer, self.id_map)
+            self.layers.simplify()
 
     def get_bounding_box(self):
         return BoundingBox.union(obj.get_bounding_box()

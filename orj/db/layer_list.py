@@ -31,6 +31,10 @@ class LayerList(Group):
                     layer.read(f, id_map)
                     self.layers.append(layer)
 
+    def simplify(self):
+        for layer in self:
+            layer.simplify()
+
     def __iter__(self):
         return iter(self.layers)
     def __reversed__(self):
